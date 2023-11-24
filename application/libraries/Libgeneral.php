@@ -292,4 +292,63 @@ class Libgeneral {
         }
         return $return;
     }
+    public function getNamaKomponenPayroll($data)
+    {
+        $datax = '';
+        if(empty($data))
+            return false;
+		$komponen = explode(';', $data);
+        if(!empty($komponen)){
+            foreach ($komponen as $k => $val) {
+				$name = $this->CI->model_master->getListMasterKomponen(['a.kode'=>$val], true);
+                $datax .= ($k+1).'. '.$name['nama'].' ('.$name['nama1'].' '.$name['operation'].' '.$name['nama2'].')<br>';
+            }
+        }
+        return $datax;
+    }
+    public function getGenerateKomponenPayroll($komponen, $gapok = 0)
+    {
+        $datax = '';
+        if(empty($komponen))
+            return false;
+        $first = 0;
+        $oprt = '';
+        $second = '';
+        if(!empty($komponen)){
+            $name = $this->CI->model_master->getListMasterKomponen(['a.kode'=>$komponen], true);
+            if($name['nama'] == 'Gaji Pokok'){
+                $first = $gapok;
+            }
+            if($name['sifat'] == 'rumus'){
+                if($name['type_first'] == 'variable'){
+                    if(strpos($name['first'], "%") == true){
+                        $angka = str_replace("%", "", $name['first']);
+                        $first = $angka/100;
+                    }else{
+                        $first = $name['first'];
+                    }
+                }else{
+                    $first = $this->getGenerateKomponenPayroll($name['first'], $gapok);
+                }
+                $oprt = $name['operation'];
+                if($name['type_second'] == 'variable'){
+                    if(strpos($name['second'], "%") == true){
+                        $angka = str_replace("%", "", $name['second']);
+                        $second = $angka/100;
+                    }else{
+                        $second = $name['second'];
+                    }
+                }else{
+                    $second = $this->getGenerateKomponenPayroll($name['second'], $gapok);
+                }
+            }
+        }
+        $datax = [
+            'kode'=>$komponen,
+            'first'=>$first,
+            'oprt'=>$oprt,
+            'second'=>$second,
+        ];
+        return $datax;
+    }
 }

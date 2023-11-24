@@ -205,4 +205,111 @@ class Cpayroll extends CI_Controller
 		}
 		echo json_encode($datax);
 	}
+	//=============================================== MASTER RUMUS =======================================================
+	public function master_rumus_payroll()
+	{
+		if (!$this->input->is_ajax_request())
+		   redirect('not_found');
+		$usage=$this->uri->segment(3);
+		if ($usage == null) {
+		   echo json_encode($this->messages->notValidParam());
+		}else{
+			if ($usage == 'view_all') {
+				$data=$this->model_master->getListMasterRumusPayroll();
+				// $access=$this->codegenerator->decryptChar($this->input->post('access'));
+				$no=1;
+				$datax['data']=[];
+				foreach ($data as $d) {
+					$var=[
+						'id'=>$d->id_rumus,
+						'create'=>$d->create_date,
+						'update'=>$d->update_date,
+						// 'access'=>$access,
+						'status'=>$d->status,
+					];
+					$properties=$this->libgeneral->getPropertiesTable($var);
+					$datax['data'][]=[
+						$d->id_rumus,
+						$d->kode,
+						$d->nama,
+						$this->libgeneral->getNamaKomponenPayroll($d->penambah),
+						$this->libgeneral->getNamaKomponenPayroll($d->pengurang),
+						$properties['tanggal'],
+						$properties['status'],
+						$properties['aksi'],
+					];
+					$no++;
+				}
+				echo json_encode($datax);
+			}elseif ($usage == 'view_one') {
+				$id = $this->input->post('id');
+				$data = $this->model_master->getListMasterKomponen(['a.id'=>$id], true);
+				$datax=[
+					'id'=>$data['id'],
+					'kode'=>$data['kode'],
+					'nama'=>$data['nama'],
+					'sifat'=>$this->libgeneral->getJenisKomponen($data['sifat']),
+					'nama1'=>$data['nama1'],
+					'nama2'=>$data['nama2'],
+					'operation'=>$data['operation'],
+					'status'=>$data['status'],
+					'create_date'=>$this->libgeneral->getDateTimeMonthFormatUser($data['create_date']),
+					'update_date'=>$this->libgeneral->getDateTimeMonthFormatUser($data['update_date']),
+					'create_by'=>$data['create_by'],
+					'update_by'=>$data['update_by'],
+					// 'nama_buat'=>(!empty($d->nama_buat)) ? $d->nama_buat:$this->otherfunctions->getMark($d->nama_buat),
+					// 'nama_update'=>(!empty($d->nama_update))?$d->nama_update:$this->otherfunctions->getMark($d->nama_update)
+				];
+				echo json_encode($datax);
+			}elseif ($usage == 'kode') {
+				$data = $this->codegenerator->kodeMasterRumusPayroll();
+        		echo json_encode($data);
+			}else{
+				echo json_encode($this->messages->notValidParam());
+			}
+		}
+	}
+	public function add_rumus_payroll()
+	{
+		$kode = $this->input->post('kode');
+		if(!empty($kode)){
+			$nama = $this->input->post('nama');
+			$penambah = $this->input->post('penambah');
+			$pengurang = $this->input->post('pengurang');
+			$dataIns = [
+				'kode'=>$kode,
+				'nama'=>$nama,
+				'penambah'=>implode(';', $penambah),
+				'pengurang'=>implode(';', $pengurang),
+			];
+			$dataIns=array_merge($dataIns, $this->model_global->getCreateProperties($this->admin));
+			$datax = $this->model_global->insertQuery($dataIns,'master_rumus_payroll');
+		}else{
+			$datax=$this->messages->notValidParam();
+		}
+		echo json_encode($datax);
+	}
+	public function ready_data_payroll()
+	{
+		echo '<pre>';
+		$karyawan = $this->model_master->getDataKaryawan(['a.golongan'=>'1']);
+		// $per = '0.05';
+		// $nom = '100000';
+		// $hasil = $per*$nom;
+		// print_r($hasil);
+		// print_r($karyawan);
+		if(!empty($karyawan)){
+			foreach ($karyawan as $d) {
+				$rumus = $this->model_master->getListMasterRumusPayroll(['a.kode'=>'RMP00001'], true);
+				$komponenTambah = (!empty($rumus['penambah']) ? $rumus['penambah'] : null);
+				if(!empty($komponenTambah)){
+					$komponenTambah = explode(';', $komponenTambah);
+					foreach ($komponenTambah as $k => $val) {
+						$var = $this->libgeneral->getGenerateKomponenPayroll($val, $d->gaji);
+						print_r($var);
+					}
+				}
+			}
+		}
+	}
 }

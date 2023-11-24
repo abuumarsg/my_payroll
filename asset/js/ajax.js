@@ -250,7 +250,7 @@ function getAjaxCount(urlx, datax, sendx) {
 	// end
 }
 
-function getSelect2(urlx, formx, datax, all_item) {
+function getSelect2(urlx, formx, datax, all_item, param='biasa') {
 	$.ajax({
 		method: "POST",
 		url: urlx,
@@ -258,7 +258,9 @@ function getSelect2(urlx, formx, datax, all_item) {
 		async: false,
 		dataType: 'json',
 		success: function (data) {
-			var html = '<option value="">Pilih Data</option>';
+			if (param == 'biasa') {
+				var html = '<option value="">Pilih Data</option>';
+			}
 			if (all_item == 'yes') {
 				html += '<option value="semua_data">Pilih Semua</option>';
 			}

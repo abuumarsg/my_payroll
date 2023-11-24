@@ -429,6 +429,10 @@ class Codegenerator{
     {
         return $this->logicGenerator('master_komponen', 'kode', 'id', 'KMP','simpleCode');
     }
+    public function kodeMasterRumusPayroll()
+    {
+        return $this->logicGenerator('master_rumus_payroll', 'kode', 'id_rumus', 'RMP','simpleCode');
+    }
     //===SECURITY END===//
 
 

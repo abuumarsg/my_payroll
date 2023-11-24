@@ -20,13 +20,13 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">DataTable with default features</h3>
+            <h3 class="card-title">Setting Rumus Payroll</h3>
           </div>
           <div class="card-body">
             <div class="row">
               <div class="col-md-6">
                 <div class="pull-left">
-                  <button class="btn btn-success btn-flat" type="button" data-toggle="collapse" data-target="#add_acc"><i class="fa fa-plus"></i> Tambah Komponen</button>
+                  <button class="btn btn-success btn-flat" type="button" data-toggle="collapse" data-target="#add_acc"><i class="fa fa-plus"></i> Tambah Rumus</button>
                 </div>
               </div>
               <div class="col-md-6">
@@ -41,6 +41,20 @@
                 <br>
                 <div class="row">
                   <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Kode</label>
+                      <input type="text" placeholder="Masukkan Kode" name="kode" id="kode_rumus" class="form-control" readonly="readonly">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Nama Rumus</label>
+                      <input type="text" placeholder="Masukkan Nama Komponen" name="nama" class="form-control">
+                    </div>
+                  </div>
+                </div><br>
+                <div class="row">
+                  <div class="col-md-6">
                     <table border="1">
                       <tr>
                         <td style="background-color:#008000;padding:10px;" class="text-center"><h4>KOMPONEN PENAMBAH</h4></td>
@@ -48,7 +62,7 @@
                       <tr>
                         <td style="background-color:#E0FCE3;padding:10px;">
                           <div class="form-group">
-                            <select name="penambah" class="duallistbox" multiple="multiple" style="height: 200px;" id="for_komponen_penambah">
+                            <select name="penambah[]" class="duallistbox" multiple="multiple" style="height: 200px;" id="for_komponen_penambah">
                             </select>
                           </div>
                         </td>
@@ -63,7 +77,7 @@
                       <tr>
                         <td style="background-color:#FCE0E0;padding:10px;">
                           <div class="form-group">
-                            <select name="pengurang" class="duallistbox" multiple="multiple" style="height: 200px;" id="for_komponen_pengurang"></select>
+                            <select name="pengurang[]" class="duallistbox" multiple="multiple" style="height: 200px;" id="for_komponen_pengurang"></select>
                           </div>
                         </td>
                       </tr>
@@ -88,10 +102,8 @@
                 <th>No</th>
                 <th>Kode</th>
                 <th>Nama</th>
-                <th>Sifat</th>
-                <th>Variable First</th>
-                <th>Operation</th>
-                <th>Variable Second</th>
+                <th>Penambah</th>
+                <th>Pengurang</th>
                 <th>Tanggal</th>
                 <th>Status</th>
                 <th>Aksi</th>
@@ -208,20 +220,12 @@
     refreshCode();
     $('#table_data').DataTable( {
       ajax: {
-        url: "<?php echo base_url('cpayroll/master_komponen/view_all/')?>",
+        url: "<?php echo base_url('cpayroll/master_rumus_payroll/view_all/')?>",
         type: 'POST',
         async: true,
         data:{access:''}
       },
       scrollX: true,
-      // paging: true,
-      // lengthChange: false,
-      // searching: true,
-      // ordering: true,
-      // // info: true,
-      // autoWidth: true,
-      // responsive: true,
-      // buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"],
       columnDefs: [
         {   targets: 0, 
           width: '5%',
@@ -242,7 +246,7 @@
           }
         },
         //aksi
-        {   targets: 9, 
+        {   targets: 7, 
           width: '5%',
           render: function ( data, type, full, meta ) {
             return '<center>'+data+'</center>';
@@ -250,43 +254,21 @@
         },
       ]
     });
-    $("input[name='radio1']").change(function(){
-        var radio1 = $("input[name='radio1']:checked").val();
-        if(radio1 == 'data'){
-			    $('#div_first_variable #variable').hide();
-			    $('#div_first_variable #data_firstx').show();
-        }else{
-			    $('#div_first_variable #variable').show();
-			    $('#div_first_variable #data_firstx').hide();
-        }
-    });
-    $("input[name='radio2']").change(function(){
-        var radio2 = $("input[name='radio2']:checked").val();
-        if(radio2 == 'data'){
-			    $('#div_second_variable #variable').hide();
-			    $('#div_second_variable #data_secondx').show();
-        }else{
-			    $('#div_second_variable #variable').show();
-			    $('#div_second_variable #data_secondx').hide();
-        }
-    });
   });
   function refreshCode() {
-    kode_generator("<?php echo base_url('cpayroll/master_komponen/kode');?>",'kode_komponen');
-    getSelect2("<?php echo base_url('cpayroll/master_komponen/OperationAritmatic')?>",'operation_add');
-    getSelect2("<?php echo base_url('cpayroll/master_komponen/getJenisKomponenList')?>",'jenis_komponen_add');
-    getSelect2("<?php echo base_url('cpayroll/master_komponen/dataVariableNrumus')?>",'for_komponen_penambah, #for_komponen_pengurang');
+    kode_generator("<?php echo base_url('cpayroll/master_rumus_payroll/kode');?>",'kode_rumus');
+    getSelect2("<?php echo base_url('cpayroll/master_komponen/dataVariableNrumus')?>",'for_komponen_penambah, #for_komponen_pengurang', null, null, 'duallistbox');
   }
   function do_add(){
     if($("#form_add")[0].checkValidity()) {
-      submitAjax("<?php echo base_url('cpayroll/add_master_komponen')?>",null,'form_add');
-      $('#table_data').DataTable().ajax.reload(function(){
-        Pace.restart();
-      });
-      $('#form_add')[0].reset();
-        refreshCode();
-    }else{
-      notValidParamx();
+      submitAjax("<?php echo base_url('cpayroll/add_rumus_payroll')?>",null,'form_add');
+    //   $('#table_data').DataTable().ajax.reload(function(){
+    //     Pace.restart();
+    //   });
+    //   $('#form_add')[0].reset();
+    //     refreshCode();
+    // }else{
+    //   notValidParamx();
     } 
   }
   function view_modal(id)
