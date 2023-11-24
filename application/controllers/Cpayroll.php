@@ -293,10 +293,12 @@ class Cpayroll extends CI_Controller
 	{
 		echo '<pre>';
 		$karyawan = $this->model_master->getDataKaryawan(['a.golongan'=>'1']);
-		// $per = '0.05';
-		// $nom = '100000';
-		// $hasil = $per*$nom;
+		$per = '0.05';
+		$nom = '100000';
+		$opt = '*';
+		$hasil = $per.$opt.$nom;
 		// print_r($hasil);
+		echo '<br>';
 		// print_r($karyawan);
 		if(!empty($karyawan)){
 			foreach ($karyawan as $d) {
@@ -306,7 +308,8 @@ class Cpayroll extends CI_Controller
 					$komponenTambah = explode(';', $komponenTambah);
 					foreach ($komponenTambah as $k => $val) {
 						$var = $this->libgeneral->getGenerateKomponenPayroll($val, $d->gaji);
-						print_r($var);
+						$varx = $this->libgeneral->getforLanjutan($var);
+						print_r($varx);
 					}
 				}
 			}

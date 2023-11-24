@@ -314,11 +314,13 @@ class Libgeneral {
         $first = 0;
         $oprt = '';
         $second = '';
+        $nama_kom = '';
         if(!empty($komponen)){
             $name = $this->CI->model_master->getListMasterKomponen(['a.kode'=>$komponen], true);
             if($name['nama'] == 'Gaji Pokok'){
                 $first = $gapok;
             }
+            $nama_kom = $name['nama'];
             if($name['sifat'] == 'rumus'){
                 if($name['type_first'] == 'variable'){
                     if(strpos($name['first'], "%") == true){
@@ -329,6 +331,9 @@ class Libgeneral {
                     }
                 }else{
                     $first = $this->getGenerateKomponenPayroll($name['first'], $gapok);
+                    // if(is_array($first)){
+                        // $first = $first['first'];
+                    // }
                 }
                 $oprt = $name['operation'];
                 if($name['type_second'] == 'variable'){
@@ -340,15 +345,46 @@ class Libgeneral {
                     }
                 }else{
                     $second = $this->getGenerateKomponenPayroll($name['second'], $gapok);
+                    // if(is_array($second)){
+                    //     $second = $second['first'];
+                    //     if(is_array($second)){
+                    //         $second = $second['first'];
+                    //     }
+                    // }
                 }
             }
         }
         $datax = [
+            'nama_kom'=>$nama_kom,
             'kode'=>$komponen,
             'first'=>$first,
             'oprt'=>$oprt,
             'second'=>$second,
         ];
         return $datax;
+    }
+    public function getforLanjutan($data)
+    {
+        $datax = '';
+        if(empty($data))
+            return false;
+		echo '<pre>';
+		print_r($data);
+        if(is_array($data['first'])){
+            // $first = $first['first'];
+        }else{
+            $nominalFirst = $data['first'];
+        }
+        if(is_array($data['second'])){
+            if(is_array($data['second']['first'])){
+                $this->
+            }else{
+                $nominalSecond = $data['second']['first'];
+            }
+    
+        }else{
+            $nominalSecond = $data['second'];
+        }
+
     }
 }
