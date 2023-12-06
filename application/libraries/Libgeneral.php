@@ -306,7 +306,7 @@ class Libgeneral {
         }
         return $datax;
     }
-    public function getGenerateKomponenPayroll($komponen, $gapok = 0)
+    public function getGenerateKomponenPayroll($komponen, $gapok = 0, $presensi = 0, $countCuti = 0)
     {
         $datax = '';
         if(empty($komponen))
@@ -319,18 +319,28 @@ class Libgeneral {
             $name = $this->CI->model_master->getListMasterKomponen(['a.kode'=>$komponen], true);
             if($name['nama'] == 'Gaji Pokok'){
                 $first = $gapok;
+                $second = $gapok;
+            }
+            if($name['nama'] == 'Presensi'){
+                $first = $presensi;
+                $second = $presensi;
+            }
+            if($name['nama'] == 'Count Cuti'){
+                $first = $countCuti;
+                $second = $countCuti;
             }
             $nama_kom = $name['nama'];
             if($name['sifat'] == 'rumus'){
                 if($name['type_first'] == 'variable'){
                     if(strpos($name['first'], "%") == true){
                         $angka = str_replace("%", "", $name['first']);
+                        $angka = str_replace(",", ".", $name['first']);
                         $first = $angka/100;
                     }else{
                         $first = $name['first'];
                     }
                 }else{
-                    $first = $this->getGenerateKomponenPayroll($name['first'], $gapok);
+                    $first = $this->getGenerateKomponenPayroll($name['first'], $gapok, $presensi, $countCuti);
                     // if(is_array($first)){
                         // $first = $first['first'];
                     // }
@@ -339,12 +349,13 @@ class Libgeneral {
                 if($name['type_second'] == 'variable'){
                     if(strpos($name['second'], "%") == true){
                         $angka = str_replace("%", "", $name['second']);
+                        $angka = str_replace(",", ".", $angka);
                         $second = $angka/100;
                     }else{
                         $second = $name['second'];
                     }
                 }else{
-                    $second = $this->getGenerateKomponenPayroll($name['second'], $gapok);
+                    $second = $this->getGenerateKomponenPayroll($name['second'], $gapok, $presensi, $countCuti);
                     // if(is_array($second)){
                     //     $second = $second['first'];
                     //     if(is_array($second)){
@@ -370,21 +381,21 @@ class Libgeneral {
             return false;
 		echo '<pre>';
 		print_r($data);
-        if(is_array($data['first'])){
-            // $first = $first['first'];
-        }else{
-            $nominalFirst = $data['first'];
-        }
-        if(is_array($data['second'])){
-            if(is_array($data['second']['first'])){
-                $this->
-            }else{
-                $nominalSecond = $data['second']['first'];
-            }
+        // if(is_array($data['first'])){
+        //     // $first = $first['first'];
+        // }else{
+        //     $nominalFirst = $data['first'];
+        // }
+        // if(is_array($data['second'])){
+        //     if(is_array($data['second']['first'])){
+        //         $this->
+        //     }else{
+        //         $nominalSecond = $data['second']['first'];
+        //     }
     
-        }else{
-            $nominalSecond = $data['second'];
-        }
+        // }else{
+        //     $nominalSecond = $data['second'];
+        // }
 
     }
 }

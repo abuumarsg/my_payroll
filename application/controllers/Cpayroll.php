@@ -293,26 +293,165 @@ class Cpayroll extends CI_Controller
 	{
 		echo '<pre>';
 		$karyawan = $this->model_master->getDataKaryawan(['a.golongan'=>'1']);
-		$per = '0.05';
-		$nom = '100000';
-		$opt = '*';
-		$hasil = $per.$opt.$nom;
-		// print_r($hasil);
 		echo '<br>';
 		// print_r($karyawan);
+		$result = [];
 		if(!empty($karyawan)){
 			foreach ($karyawan as $d) {
-				$rumus = $this->model_master->getListMasterRumusPayroll(['a.kode'=>'RMP00001'], true);
+				$presensi = 22;
+				$countCuti = 3;
+				$rumus = $this->model_master->getListMasterRumusPayroll(['a.kode'=>'RMP00002'], true);
 				$komponenTambah = (!empty($rumus['penambah']) ? $rumus['penambah'] : null);
 				if(!empty($komponenTambah)){
 					$komponenTambah = explode(';', $komponenTambah);
 					foreach ($komponenTambah as $k => $val) {
-						$var = $this->libgeneral->getGenerateKomponenPayroll($val, $d->gaji);
-						$varx = $this->libgeneral->getforLanjutan($var);
-						print_r($varx);
+						$result[] = $this->libgeneral->getGenerateKomponenPayroll($val, $d->gaji, $presensi, $countCuti);
+						// $varx = $this->libgeneral->getforLanjutan($var);
 					}
 				}
 			}
 		}
+		print_r($result);
+		$variable = $this->getPecahFirst($result);
+		// print_r($variable);
+	}
+	function getPecahFirst($result){
+		$firstCount = count($result);
+		$variable = [];
+		for ($i = 0; $i < $firstCount; $i++) {
+			// $secondCount = count($result[$i]);
+			if(is_array($result[$i]['first']) || is_array($result[$i]['second'])){
+				if(is_array($result[$i]['first'])){
+					$first1 = $this->getPecahSecond($result[$i]['first']);
+				}else{
+					$first1 = $result[$i]['first'];
+				}
+				if(is_array($result[$i]['second'])){
+					$second1 = $this->getPecahSecond($result[$i]['second']);
+				}else{
+					$second1 = $result[$i]['second'];
+				}
+				$variable[$i] = $this->startHitung($first1, $result[$i]['oprt'], $second1);
+			}else{
+				$variable[$i] = $result[$i]['first'];
+			}
+		}
+		return $variable;
+	}
+	function getPecahSecond($var){
+		print_r($var);
+		if(is_array($var['first']) && is_array($var['second'])){
+			$variableFirst2 = $var['first'];
+			// print_r($variableFirst2);
+			if(is_array($variableFirst2['first'])){
+				$first1 = $this->getPecahThird($variableFirst2);
+			}else{
+				$first1 = $variableFirst2['first'];
+			}
+			$variableSecond2 = $var['second'];
+			if(is_array($variableSecond2['second'])){
+				$second1 = $this->getPecahThird($variableSecond2);
+			}else{
+				$second1 = $variableSecond2['first'];
+			}
+			$return = $this->startHitung($first1, $var['oprt'], $second1);
+		}else{
+			$return = !empty($var['first']) ? $var['first'] : $var['second'];
+		}
+		return $return;
+	}
+	function getPecahThird($var2){
+		print_r($var2);
+		if(is_array($var2['first']) && is_array($var2['second'])){
+			$variableFirst3 = $var2['first'];
+			if(is_array($variableFirst3['first'])){
+				$first1 = $this->getPecahFour($variableFirst3);
+			}else{
+				$first1 = $variableFirst3['first'];
+			}
+			$variableSecond3 = $var2['second'];
+			if(is_array($variableSecond3['second'])){
+				$second1 = $this->getPecahFour($variableSecond3);
+			}else{
+				$second1 = $variableSecond3['first'];
+			}
+			// print_r($var2['kode']);echo 'we<br>';
+			// print_r($first1);echo 'we<br>';
+			// print_r($var2['oprt']);echo 'we<br>';
+			// print_r($second1);echo 'qw<br>';
+			$return = $this->startHitung($first1, $var['oprt'], $second1);
+		}else{
+			$return = !empty($var['first']) ? $var['first'] : $var['second'];
+		}
+		return $return;
+	}
+	function startHitung($awal, $opt, $akhir)
+	{
+		if($opt == '+'){
+			$return = $awal+$akhir;
+		}elseif($opt == '-'){
+			$return = $awal-$akhir;
+		}elseif($opt == '*'){
+			$return = $awal*$akhir;
+		}elseif($opt == '/'){
+			$return = $awal/$akhir;
+		}
+		return $return;
+	}
+	public function tes()
+	{
+		echo '<pre>';
+		
+		$myArray = array(
+			array(
+				array(1, 2, 3),
+				array(4, 5, 6),
+				array(7, 8, 9)
+			),
+			array(
+				array('a', 'b', 'c'),
+				array('d', 'e', 'f'),
+				array('g', 'h', 'i')
+			),
+			array(
+				array('x', 'y', 'z'),
+				array('p', 'q', 'r'),
+				array('m', 'n', 'o')
+			)
+		);
+
+		// Mendapatkan jumlah elemen dalam array luar
+		print_r($myArray);
+		$outerCount = count($myArray);
+		print_r($outerCount);
+		// Menjalankan array multidimensi dan mengalikan nilai
+		for ($i = 0; $i < $outerCount; $i++) {
+			// Mendapatkan jumlah elemen dalam array tengah
+			$middleCount = count($myArray[$i]);
+
+			for ($j = 0; $j < $middleCount; $j++) {
+				// Mendapatkan jumlah elemen dalam array dalam
+				$innerCount = count($myArray[$i][$j]);
+
+				for ($k = 0; $k < $innerCount; $k++) {
+					// Mengalikan nilai array paling terdalam
+					// $myArray[$i][$j][$k] *= 2; // Ganti angka ini dengan faktor perkalian yang diinginkan
+				}
+			}
+		}
+
+		// // Menampilkan array hasil perkalian
+		// for ($i = 0; $i < $outerCount; $i++) {
+		// 	for ($j = 0; $j < $middleCount; $j++) {
+		// 		for ($k = 0; $k < $innerCount; $k++) {
+		// 			// Menampilkan nilai array paling terdalam
+		// 			echo $myArray[$i][$j][$k] . ' ';
+		// 		}
+		// 		// Memberikan baris baru setelah setiap array tengah selesai dijalankan
+		// 		echo "<br>";
+		// 	}
+		// 	// Memberikan baris baru setelah setiap array luar selesai dijalankan
+		// 	echo "<br>";
+		// }
 	}
 }
