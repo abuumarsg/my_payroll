@@ -334,16 +334,13 @@ class Libgeneral {
                 if($name['type_first'] == 'variable'){
                     if(strpos($name['first'], "%") == true){
                         $angka = str_replace("%", "", $name['first']);
-                        $angka = str_replace(",", ".", $name['first']);
+                        $angka = str_replace(",", ".", $angka);
                         $first = $angka/100;
                     }else{
                         $first = $name['first'];
                     }
                 }else{
                     $first = $this->getGenerateKomponenPayroll($name['first'], $gapok, $presensi, $countCuti);
-                    // if(is_array($first)){
-                        // $first = $first['first'];
-                    // }
                 }
                 $oprt = $name['operation'];
                 if($name['type_second'] == 'variable'){
@@ -356,12 +353,6 @@ class Libgeneral {
                     }
                 }else{
                     $second = $this->getGenerateKomponenPayroll($name['second'], $gapok, $presensi, $countCuti);
-                    // if(is_array($second)){
-                    //     $second = $second['first'];
-                    //     if(is_array($second)){
-                    //         $second = $second['first'];
-                    //     }
-                    // }
                 }
             }
         }

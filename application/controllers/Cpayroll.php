@@ -313,13 +313,12 @@ class Cpayroll extends CI_Controller
 		}
 		print_r($result);
 		$variable = $this->getPecahFirst($result);
-		// print_r($variable);
+		print_r($variable);
 	}
 	function getPecahFirst($result){
 		$firstCount = count($result);
 		$variable = [];
 		for ($i = 0; $i < $firstCount; $i++) {
-			// $secondCount = count($result[$i]);
 			if(is_array($result[$i]['first']) || is_array($result[$i]['second'])){
 				if(is_array($result[$i]['first'])){
 					$first1 = $this->getPecahSecond($result[$i]['first']);
@@ -331,6 +330,8 @@ class Cpayroll extends CI_Controller
 				}else{
 					$second1 = $result[$i]['second'];
 				}
+				// print_r('==============================================getPecahFirst=====================================================<br>');
+				// print_r('('.$first1.' '.$result[$i]['oprt'].' '.$second1.')<br>');
 				$variable[$i] = $this->startHitung($first1, $result[$i]['oprt'], $second1);
 			}else{
 				$variable[$i] = $result[$i]['first'];
@@ -339,21 +340,51 @@ class Cpayroll extends CI_Controller
 		return $variable;
 	}
 	function getPecahSecond($var){
-		print_r($var);
-		if(is_array($var['first']) && is_array($var['second'])){
+		// print_r('==============================================getPecahSecond=====================================================<br>');
+		// print_r($var);
+		if(is_array($var['first']) || is_array($var['second'])){
+			// print_r('==============================================variableFirst2=====================================================<br>');
 			$variableFirst2 = $var['first'];
-			// print_r($variableFirst2);
-			if(is_array($variableFirst2['first'])){
-				$first1 = $this->getPecahThird($variableFirst2);
+			if(is_array($variableFirst2)){
+				if(is_array($variableFirst2['first'])){
+					if(is_array($variableFirst2['first'])){
+						$first1 = $this->getPecahSecond($variableFirst2);
+					}else{
+						$first1 = $variableFirst2['first'];
+					}
+				}elseif(is_array($variableFirst2['second'])){
+					if(is_array($variableFirst2['second'])){
+						$first1 = $this->getPecahSecond($variableFirst2);
+					}else{
+						$first1 = $variableFirst2['second'];
+					}
+				}else{
+					$first1 = $variableFirst2['first'];
+				}
 			}else{
-				$first1 = $variableFirst2['first'];
+				$first1 = $variableFirst2;
 			}
 			$variableSecond2 = $var['second'];
-			if(is_array($variableSecond2['second'])){
-				$second1 = $this->getPecahThird($variableSecond2);
+			if(is_array($variableSecond2)){
+				if(is_array($variableSecond2['first'])){
+					if(is_array($variableSecond2['first'])){
+						$second1 = $this->getPecahSecond($variableSecond2);
+					}else{
+						$second1 = $variableSecond2['first'];
+					}
+				}elseif(is_array($variableSecond2['second'])){
+					if(is_array($variableSecond2['second'])){
+						$second1 = $this->getPecahSecond($variableSecond2);
+					}else{
+						$second1 = $variableSecond2['second'];
+					}
+				}else{
+					$second1 = $variableSecond2['first'];
+				}
 			}else{
-				$second1 = $variableSecond2['first'];
+				$second1 = $variableSecond2;
 			}
+			print_r('('.$first1.' '.$var['oprt'].' '.$second1.')<br>');
 			$return = $this->startHitung($first1, $var['oprt'], $second1);
 		}else{
 			$return = !empty($var['first']) ? $var['first'] : $var['second'];
@@ -361,27 +392,115 @@ class Cpayroll extends CI_Controller
 		return $return;
 	}
 	function getPecahThird($var2){
-		print_r($var2);
-		if(is_array($var2['first']) && is_array($var2['second'])){
-			$variableFirst3 = $var2['first'];
-			if(is_array($variableFirst3['first'])){
-				$first1 = $this->getPecahFour($variableFirst3);
+		// print_r('===============================================getPecahThird====================================================<br>');
+		// if(is_array($var2['first'])){
+		// 	print_r($var2);
+		// 	echo 'ini array<br>';
+		// }
+		if(is_array($var2['first']) || is_array($var2['second'])){
+			$variableFirst2 = $var2['first'];
+			if(is_array($variableFirst2)){
+				if(is_array($variableFirst2['first']) || is_array($variableFirst2['second'])){
+					if(is_array($variableFirst2['first'])){
+						$first1 = $this->getPecahFour($variableFirst2);
+					}else{
+						$first1 = $variableFirst2['first'];
+					}
+					if(is_array($variableFirst2['second'])){
+						$first1 = $this->getPecahFour($variableFirst2);
+					}else{
+						$first1 = $variableFirst2['second'];
+					}
+				}else{
+					$first1 = $variableFirst2['first'];
+				}
 			}else{
-				$first1 = $variableFirst3['first'];
+				$first1 = $variableFirst2;
 			}
-			$variableSecond3 = $var2['second'];
-			if(is_array($variableSecond3['second'])){
-				$second1 = $this->getPecahFour($variableSecond3);
+			$variableSecond2 = $var2['second'];
+			if(is_array($variableSecond2)){
+				if(is_array($variableSecond2['first']) || is_array($variableSecond2['second'])){
+					if(is_array($variableSecond2['first'])){
+						$second1 = $this->getPecahFour($variableSecond2);
+					}else{
+						$second1 = $variableSecond2['first'];
+					}
+					if(is_array($variableSecond2['second'])){
+						$second1 = $this->getPecahFour($variableSecond2);
+					}else{
+						$second1 = $variableSecond2['second'];
+					}
+				}else{
+					$second1 = $variableSecond2['first'];
+				}
 			}else{
-				$second1 = $variableSecond3['first'];
+				$second1 = $variableSecond2;
 			}
-			// print_r($var2['kode']);echo 'we<br>';
-			// print_r($first1);echo 'we<br>';
-			// print_r($var2['oprt']);echo 'we<br>';
-			// print_r($second1);echo 'qw<br>';
-			$return = $this->startHitung($first1, $var['oprt'], $second1);
+			// $variableFirst3 = $var2['first'];
+			// if(is_array($variableFirst3['first'])){
+			// 	$first1 = $this->getPecahFour($variableFirst3);
+			// }else{
+			// 	$first1 = $variableFirst3;
+			// }
+			// $variableSecond3 = $var2['second'];
+			// if(is_array($variableSecond3['second'])){
+			// 	$second1 = $this->getPecahFour($variableSecond3);
+			// }else{
+			// 	$second1 = $variableSecond3['first'];
+			// }
+			// print_r('('.$first1.' '.$var2['oprt'].' '.$second1.')<br>');
+			$return = $this->startHitung($first1, $var2['oprt'], $second1);
 		}else{
-			$return = !empty($var['first']) ? $var['first'] : $var['second'];
+			$return = !empty($var2['first']) ? $var2['first'] : $var2['second'];
+		}
+		return $return;
+	}
+	function getPecahFour($var2){
+		// print_r('===============================================getPecahFour====================================================<br>');
+		// print_r($var2);
+		if(is_array($var2['first']) || is_array($var2['second'])){
+			$variableFirst2 = $var2['first'];
+			if(is_array($variableFirst2)){
+				if(is_array($variableFirst2['first']) || is_array($variableFirst2['second'])){
+					if(is_array($variableFirst2['first'])){
+						$first1 = $this->getPecahFour($variableFirst2);
+					}else{
+						$first1 = $variableFirst2['first'];
+					}
+					if(is_array($variableFirst2['second'])){
+						$first1 = $this->getPecahFour($variableFirst2);
+					}else{
+						$first1 = $variableFirst2['second'];
+					}
+				}else{
+					$first1 = $variableFirst2['first'];
+				}
+			}else{
+				$first1 = $variableFirst2;
+			}
+			$variableSecond2 = $var2['second'];
+			if(is_array($variableSecond2)){
+				if(is_array($variableSecond2['first']) || is_array($variableSecond2['second'])){
+					if(is_array($variableSecond2['first'])){
+						$second1 = $this->getPecahFour($variableSecond2);
+					}else{
+						$second1 = $variableSecond2['first'];
+					}
+					if(is_array($variableSecond2['second'])){
+						$second1 = $this->getPecahFour($variableSecond2);
+					}else{
+						$second1 = $variableSecond2['second'];
+					}
+				}else{
+					$second1 = $variableSecond2['first'];
+				}
+			}else{
+				$second1 = $variableSecond2;
+			}
+			// print_r('('.$first1.' '.$var2['oprt'].' '.$second1.')<br>');
+			$return = $this->startHitung($first1, $var2['oprt'], $second1);
+		}else{
+			$return = !empty($var2['first']) ? $var2['first'] : $var2['second'];
 		}
 		return $return;
 	}
