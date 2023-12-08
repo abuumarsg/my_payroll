@@ -3,12 +3,12 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>Setting Rumus Payroll</h1>
+        <h1><i class="fas fa-user-cog"></i> Setting Rumus Payroll</h1>
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
           <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item active">DataTables</li>
+          <li class="breadcrumb-item active"><i class="fas fa-user-cog"></i> Setting Rumus Payroll</li>
         </ol>
       </div>
     </div>
@@ -20,7 +20,7 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">Setting Rumus Payroll</h3>
+            <h3 class="card-title"><i class="fas fa-user-cog"></i> Setting Rumus Payroll</h3>
           </div>
           <div class="card-body">
             <div class="row">
@@ -37,7 +37,7 @@
               </div>
             </div>
             <div class="collapse" id="add_acc">
-              <form id="form_add">
+              <form id="form_add" class="box-border">
                 <br>
                 <div class="row">
                   <div class="col-md-6">
@@ -54,8 +54,8 @@
                   </div>
                 </div><br>
                 <div class="row">
-                  <div class="col-md-6">
-                    <table border="1">
+                  <div class="col-md-12">
+                    <table border="1" width="100%">
                       <tr>
                         <td style="background-color:#008000;padding:10px;" class="text-center"><h4>KOMPONEN PENAMBAH</h4></td>
                       </tr>
@@ -69,8 +69,11 @@
                       </tr>
                     </table>
                   </div>
-                  <div class="col-md-6">
-                    <table style="padding:2px;" border="1">
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-md-12">
+                    <table style="padding:2px;" border="1" width="100%">
                       <tr>
                         <td style="background-color:#ff0000;padding:10px;" class="text-center"><h4>KOMPONEN PENGURANG</h4></td>
                       </tr>
@@ -87,15 +90,14 @@
                 <br>
                 <div class="row">
                   <div class="col-md-12">
-                    <div class="form-group pull-right">
-                      <button type="button" onclick="do_add()" id="btn_add" class="btn btn-success"><i class="fa fa-floppy-o"></i> Simpan</button>
+                    <div class="form-group">
+                      <button type="button" onclick="do_add()" id="btn_add" class="btn btn-success pull-right"><i class="fa fa-floppy-o"></i> Simpan</button>
                     </div>
                   </div>
                 </div>
                 <hr>
               </form>
             </div>
-            <!-- laksdaksdj -->
             <table id="table_data" class="table table-bordered table-striped" style="width:100%;">
               <thead>
               <tr>
@@ -223,7 +225,7 @@
         url: "<?php echo base_url('cpayroll/master_rumus_payroll/view_all/')?>",
         type: 'POST',
         async: true,
-        data:{access:''}
+        data:{access:'"<?php echo $this->codegenerator->encryptChar($access);?>"'}
       },
       scrollX: true,
       columnDefs: [
@@ -234,13 +236,25 @@
           }
         },
         {   targets: 1,
-          width: '15%',
+          width: '10%',
           render: function ( data, type, full, meta ) {
             return data;
           }
         },
         {   targets: 2,
           width: '15%',
+          render: function ( data, type, full, meta ) {
+            return data;
+          }
+        },
+        {   targets: 3,
+          width: '25%',
+          render: function ( data, type, full, meta ) {
+            return data;
+          }
+        },
+        {   targets: 4,
+          width: '25%',
           render: function ( data, type, full, meta ) {
             return data;
           }
@@ -253,6 +267,23 @@
           }
         },
       ]
+    });
+    $(".select22").select2({
+        tags:[
+            {id: "red", text: "red", qt: 3},
+            {id: "green", text: "green", qt: 12},
+            {id: "blue", text: "blue", qt: 5},
+            {id: "black", text: "black", qt: 7}
+        ],
+        formatResult: function(result) {
+            if (result.qt === undefined) {
+                return result.text;
+            }
+            return result.text
+                + "<span class='used-number'>"
+                + result.qt
+                + "</span>";
+        }
     });
   });
   function refreshCode() {

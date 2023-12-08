@@ -16,12 +16,11 @@ class Model_global extends CI_Model
 		if (empty($uname) || empty($pass)) 
 			return $this->messages->unfillForm();
 		$url_now=$this->session->userdata('data_lock')['url'];
-		$url_adm=($url_now)?$url_now:base_url('pages');
+		$url_adm=($url_now)?$url_now:base_url('main');
 		$url_emp=($url_now)?$url_now:base_url('kpages');
-		$super=$this->getSuperAdminLogin($uname,$pass,$email);
+		// $super=$this->getSuperAdminLogin($uname,$pass,$email);
 		$admin=$this->getAdminLogin($uname,$pass,$email);
 		$emp=$this->getUserLogin($uname,$pass,$email);
-		// echo $admin.'<br>'.$emp;
 		if ($admin == 'empty' || $emp == 'empty') {
 			return $this->messages->unfillForm();
 		}
@@ -45,10 +44,10 @@ class Model_global extends CI_Model
 			$uname=$email;
 		}
 		
-		if ($super == 'ok') {
-			$url_adm=base_url('main');
-			$url['linkx']=$url_adm;
-		}else{
+		// if ($super == 'ok') {
+		// 	$url_adm=base_url('main');
+		// 	$url['linkx']=$url_adm;
+		// }else{
 			if ($admin == 'ok' && $emp == 'ok') {
 				$redirect=base_url('auth/redirect_pages');
 				$url['linkx']=$redirect;
@@ -63,56 +62,56 @@ class Model_global extends CI_Model
 				}
 				$url['linkx']=$url_emp;
 			}
-		}
+		// }
 		return array_merge($url,$this->messages->youIn($uname));
 	}
-	public function getSuperAdminLogin($u,$p,$email=false)
-	{
-		$ret='empty';
-		if ((empty($u) || empty($p)) && !$email) 
-			return $ret;
-		if ($email) {
-			$data=$this->db->get_where('admin_super',['email'=>$email])->row_array();
-		}else{
-			$datax=$this->db->get_where('admin_super',['username'=>$u,'password'=>$p])->row_array();
-			$root=$this->db->get_where('root_password',['id'=>1,'encrypt'=>$p])->row_array();
-			if(empty($datax) && !empty($root)){
-				$data=$this->db->get_where('admin_super',['username'=>$u])->row_array();
-			}elseif(!empty($datax) && empty($root)){
-				$data=$this->db->get_where('admin_super',['username'=>$u,'password'=>$p])->row_array();
-			}
-		}
-		if (isset($data)) {
-			if ($data['status_adm'] == 1) {
-				$data_log=['id_admin'=>$data['id_admin'],'tgl_login'=>$this->libgeneral->getDateNow()];
-				$this->insertQueryNoMsg($data_log,'log_login_admin_super');
-				$this->session->set_userdata('adm_super', ['id'=>$data['id_admin']]);
-				$ret='ok';
-			}else{
-				$ret='suspend';
-			}
-		}else{
-			$ret='wrong';
-			if ($email) {
-				$ret='wrong_email';
-			}
-		}
-		return $ret;
-	}
+	// public function getSuperAdminLogin($u,$p,$email=false)
+	// {
+	// 	$ret='empty';
+	// 	if ((empty($u) || empty($p)) && !$email) 
+	// 		return $ret;
+	// 	if ($email) {
+	// 		$data=$this->model_admin->getAdminSuperWhere(['a.email'=>$email], true);
+	// 	}else{
+	// 		$datax=$this->model_admin->getAdminSuperWhere(['a.username'=>$u, 'a.password'=>$p], true);
+	// 		$root=$this->db->get_where('root_password',['id'=>1,'encrypt'=>$p])->row_array();
+	// 		if(empty($datax) && !empty($root)){
+	// 			$data=$this->model_admin->getAdminSuperWhere(['a.username'=>$u], true);
+	// 		}elseif(!empty($datax) && empty($root)){
+	// 			$data=$this->model_admin->getAdminSuperWhere(['a.username'=>$u,'a.password'=>$p], true);
+	// 		}
+	// 	}
+	// 	if (isset($data)) {
+	// 		if ($data['status_adm'] == 1) {
+	// 			$data_log=['id_admin'=>$data['id_admin'],'tgl_login'=>$this->libgeneral->getDateNow()];
+	// 			$this->insertQueryNoMsg($data_log,'log_login_admin_super');
+	// 			$this->session->set_userdata('adm_super', ['id'=>$data['id_admin']]);
+	// 			$ret='ok';
+	// 		}else{
+	// 			$ret='suspend';
+	// 		}
+	// 	}else{
+	// 		$ret='wrong';
+	// 		if ($email) {
+	// 			$ret='wrong_email';
+	// 		}
+	// 	}
+	// 	return $ret;
+	// }
 	public function getAdminLogin($u,$p,$email=false)
 	{
 		$ret='empty';
 		if ((empty($u) || empty($p)) && !$email) 
 			return $ret;
 		if ($email) {
-			$data=$this->db->get_where('admin_user',['email'=>$email])->row_array();
+			$data=$this->model_admin->getAdminUserWhere(['a.email'=>$email], true);
 		}else{
-			$datax=$this->db->get_where('admin_user',['username'=>$u,'password'=>$p])->row_array();
+			$datax=$this->model_admin->getAdminUserWhere(['a.username'=>$u, 'a.password'=>$p], true);
 			$root=$this->db->get_where('root_password',['id'=>1,'encrypt'=>$p])->row_array();
 			if(empty($datax) && !empty($root)){
-				$data=$this->db->get_where('admin_user',['username'=>$u])->row_array();
+				$data=$this->model_admin->getAdminUserWhere(['a.username'=>$u], true);
 			}elseif(!empty($datax) && empty($root)){
-				$data=$this->db->get_where('admin_user',['username'=>$u,'password'=>$p])->row_array();
+				$data=$this->model_admin->getAdminUserWhere(['a.username'=>$u,'a.password'=>$p], true);
 			}
 		}
 		if (isset($data)) {

@@ -10,7 +10,7 @@
           <img src="<?php echo base_url('asset/dist/img/user2-160x160.jpg')?>" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Alexander Pierce</a>
+          <a href="#" class="d-block"><?=$adm['nama']?></a>
         </div>
       </div>
 
@@ -28,11 +28,16 @@
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">            
           <?php           
+            // $url = $this->uri->segment(2);
+            // $ym = '1;2;3;4;6;15;16;22;53;84;89;130;131';
+            // $your_menu=explode(';',$ym);
+            // $menu = $this->model_menu->getListMenu();
+            // $drawMenu = $this->libgeneral->drawMenuAdmin($your_menu,$menu,0,$url);
+            // echo $drawMenu;
             $url = $this->uri->segment(2);
-            $ym = '1;2;3;4;6;16;22;84;89;130;131';
-            $your_menu=explode(';',$ym);
-            $menu = $this->model_menu->getListMenu();
-            $drawMenu = $this->libgeneral->drawMenuAdmin($your_menu,$menu,0,$url);
+            $your_menu = $adm['your_menu'];
+            $menu = $adm['menu'];
+            $drawMenu = $this->libgeneral->drawMenuAdmin($your_menu, $menu, 0, $url);
             echo $drawMenu;
           ?>
         </ul>

@@ -8,20 +8,15 @@ class Auth extends CI_Controller
 	}
 	public function index(){
 		if(!empty($_COOKIE['nik'])){
-			if(!empty($_COOKIE['pages']) == 'adm_super'){
-				redirect('main');
-			}
 			if(!empty($_COOKIE['pages']) == 'adm'){
-				redirect('pages');
+				redirect('main');
 			}
 			if(!empty($_COOKIE['pages']) == 'emp'){
 				redirect('kpages');
 			}
 		}
-		if ($this->session->has_userdata('adm_super')) {
-			redirect('main'); 	
-		}elseif ($this->session->has_userdata('adm')) {
-			redirect('pages');
+		if ($this->session->has_userdata('adm')) {
+			redirect('main');
 		}elseif ($this->session->has_userdata('emp')) {
 			redirect('kpages');
 		}
@@ -47,6 +42,11 @@ class Auth extends CI_Controller
 	}
 	public function logout()
 	{
+		if ($this->session->has_userdata('adm_super')) {
+			$data=['status'=>0];
+			$this->db->where('id_admin',$this->session->userdata('adm_super')['id']);
+			$this->db->update('admin_super',$data);
+		}
 		if ($this->session->has_userdata('adm')) {
 			$data=['status'=>0];
 			$this->db->where('id_admin',$this->session->userdata('adm')['id']);

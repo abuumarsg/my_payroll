@@ -105,7 +105,8 @@ class Libgeneral {
             $update=$val['update'];//$this->CI->formatter->getDateTimeMonthFormatUser($val['update']);
         }
         // '<span class="badge badge-success">Success</span>'
-        $tanggal='<span class="badge badge-warning" data-toggle="tooltip" title="Dibuat Tanggal""><i class="fas fa-pen fa-fw"></i>'.$create.' WIB</span><br><span class="badge badge-primary" data-toggle="tooltip" title="Diupdate Tanggal"><i class="fa fa-edit fa-fw"></i> '.$update.' WIB </span>';
+        $tanggal='<span class="badge badge-warning" data-toggle="tooltip" title="Dibuat Tanggal""><i class="fas fa-pen fa-fw"></i>'.$create.' WIB</span><br>
+        <span class="badge badge-primary" data-toggle="tooltip" title="Diupdate Tanggal"><i class="fa fa-edit fa-fw"></i> '.$update.' WIB </span>';
         if (isset($val['status'])) {
             if ($val['status'] == 1) {
               $status='<button type="button" class="stat scc" href="javascript:void(0)" onclick=do_status('.$val['id'].',0)><i class="fa fa-toggle-on"></i></button>';
@@ -301,7 +302,9 @@ class Libgeneral {
         if(!empty($komponen)){
             foreach ($komponen as $k => $val) {
 				$name = $this->CI->model_master->getListMasterKomponen(['a.kode'=>$val], true);
-                $datax .= ($k+1).'. '.$name['nama'].' ('.$name['nama1'].' '.$name['operation'].' '.$name['nama2'].')<br>';
+                $datax .= ($k+1).'. <span class="badge badge-success">'.$name['nama'].'</span> = <span class="badge badge-primary">'.$name['nama1'].'</span>
+                <span class="badge badge-danger">'.$name['operation'].'</span>
+                <span class="badge badge-primary">'.$name['nama2'].'</span><br>';
             }
         }
         return $datax;
@@ -365,28 +368,87 @@ class Libgeneral {
         ];
         return $datax;
     }
-    public function getforLanjutan($data)
+    public function getYourAccess($id)
     {
-        $datax = '';
-        if(empty($data))
-            return false;
-		echo '<pre>';
-		print_r($data);
-        // if(is_array($data['first'])){
-        //     // $first = $first['first'];
-        // }else{
-        //     $nominalFirst = $data['first'];
-        // }
-        // if(is_array($data['second'])){
-        //     if(is_array($data['second']['first'])){
-        //         $this->
-        //     }else{
-        //         $nominalSecond = $data['second']['first'];
-        //     }
-    
-        // }else{
-        //     $nominalSecond = $data['second'];
-        // }
+        if (empty($id)) 
+            return null;
+        $pack=[];
+        $admin=$this->CI->model_admin->getAdminById($id);
+        if (!isset($admin)) 
+            return null;
+        $user_group=$this->CI->model_master->getUserGroup($admin['id_group']);
+        if (!isset($user_group)) 
+            return null;
+        $ex=explode(';',$user_group['list_access']);
+        if (!isset($ex)) 
+            return null;
+        foreach ($ex as $e) {
+            $acc=$this->CI->model_master->getAccess($e);
 
+            if (isset($acc)) {
+                foreach ($acc as $d) {
+                  array_push($pack,$d->kode_access);
+              }
+          }
+      }
+      return $pack;
+    }
+    public function getAllAccess()
+    {
+        $access=$this->CI->model_master->getListAccess();
+        $pack=[];
+        foreach ($access as $a) {
+            $pack[strtolower($a->kode_access)]=strtoupper($a->kode_access);
+        }
+        return $pack;
+    }
+    public function getYourMenu($id)
+    {
+        if (empty($id)) 
+            return null;
+        $pack=[];
+        $admin=$this->CI->model_admin->getAdminById($id);
+        if (!isset($admin)) 
+            return null;
+        $user_group=$this->CI->model_master->getUserGroup($admin['id_group']);
+        if (!isset($user_group)) 
+            return null;
+        $ex=explode(';',$user_group['list_id_menu']);
+        if (!isset($ex)) 
+            return null;
+            foreach ($ex as $e) {
+                $menu=$this->CI->model_master->getMenu($e);
+                if (isset($menu)) {
+					if ($menu['parent'] || ($menu['parent'] == 0 && $menu['sequence'] == 1)) {
+						if ($menu['url'] != '#' && $menu['status'] == 1) {
+							$ex1=$this->getParseOneLevelVar($menu['sub_url']);
+							if (isset($ex1)) {
+								foreach ($ex1 as $e1) {
+									array_push($pack,$e1);
+								}
+							}
+							array_push($pack,$menu['url']);
+						}
+                    }
+                }
+            }
+        return array_values(array_unique($pack));
+    }
+    public function getYourMenuId($id)
+    {
+        if (empty($id)) 
+            return null;
+        $pack=[];
+        $admin=$this->CI->model_admin->getAdminById($id);
+        if (!isset($admin)) 
+            return null;
+        $user_group=$this->CI->model_master->getUserGroup($admin['id_group']);
+        if (!isset($user_group)) 
+            return null;
+        $ex=explode(';',$user_group['list_id_menu']);
+        if (!isset($ex)) 
+            return null;
+        $pack=$ex;
+        return $pack;
     }
 }

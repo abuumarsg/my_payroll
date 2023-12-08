@@ -3,12 +3,12 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>DataTables</h1>
+        <h1><i class="far fa-credit-card"></i> Komponen Payroll</h1>
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item active">DataTables</li>
+          <li class="breadcrumb-item"><a href="#"><i class="fas fa-tachometer-alt"></i> Beranda</a></li>
+          <li class="breadcrumb-item active"><i class="far fa-credit-card"></i> Komponen Payroll</li>
         </ol>
       </div>
     </div>
@@ -20,7 +20,7 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">DataTable with default features</h3>
+            <h3 class="card-title"><i class="far fa-credit-card"></i> Komponen Payroll</h3>
           </div>
           <div class="card-body">
             <div class="row">
@@ -37,7 +37,7 @@
               </div>
             </div>
             <div class="collapse" id="add_acc">
-              <form id="form_add">
+              <form id="form_add" class="box-border">
                 <br>
                 <div class="row">
                   <div class="col-md-2">
@@ -114,8 +114,8 @@
                 <br>
                 <div class="row">
                   <div class="col-md-12">
-                    <div class="form-group pull-right">
-                      <button type="button" onclick="do_add()" id="btn_add" class="btn btn-success"><i class="fa fa-floppy-o"></i> Simpan</button>
+                    <div class="form-group">
+                      <button type="button" onclick="do_add()" id="btn_add" class="btn btn-success pull-right"><i class="fa fa-floppy-o"></i> Simpan</button>
                     </div>
                   </div>
                 </div>
@@ -251,17 +251,9 @@
         url: "<?php echo base_url('cpayroll/master_komponen/view_all/')?>",
         type: 'POST',
         async: true,
-        data:{access:''}
+        data:{access:"<?php echo $this->codegenerator->encryptChar($access);?>"}
       },
       scrollX: true,
-      // paging: true,
-      // lengthChange: false,
-      // searching: true,
-      // ordering: true,
-      // // info: true,
-      // autoWidth: true,
-      // responsive: true,
-      // buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"],
       columnDefs: [
         {   targets: 0, 
           width: '5%',
@@ -279,6 +271,12 @@
           width: '15%',
           render: function ( data, type, full, meta ) {
             return data;
+          }
+        },
+        {   targets: 5,
+          width: '5%',
+          render: function ( data, type, full, meta ) {
+            return '<center>'+data+'</center>';
           }
         },
         //aksi
