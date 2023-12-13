@@ -77,6 +77,19 @@ class Main extends CI_Controller
 		// redirect('main/'.reset($this->dtroot['adm']['your_url']));
 		redirect('main/dashboard');
 	}
+	public function change_status()
+	{
+		if (!$this->input->is_ajax_request()) 
+			redirect('not_found');
+		$table=$this->input->post('table');
+		$data=$this->input->post('data');
+		$where=$this->input->post('where');
+		
+		if (empty($table) || empty($data) || empty($where))
+			echo json_encode($this->messages->notValidParam());
+		$datax=$this->model_global->updateQuery($data,$table,$where);
+		echo json_encode($datax);
+	}
 	public function dashboard(){
 		$nama_menu="dashboard";
 		// if (in_array($nama_menu, $this->link)) {
@@ -100,6 +113,15 @@ class Main extends CI_Controller
 		// }else{
 		// 	redirect('pages/not_found');
 		// }
+	}
+	public function master_bagian(){
+		$data=[
+			'access'=>$this->access,
+		];
+		$this->load->view('admin/temp/header', $this->dtroot);
+		$this->load->view('admin/temp/sidebar', $this->dtroot);
+		$this->load->view('admin/master_bagian', $data);
+		$this->load->view('admin/temp/footer', $this->dtroot);
 	}
 	public function komponen_payroll(){
 		$data=[

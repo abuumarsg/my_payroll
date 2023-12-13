@@ -433,6 +433,10 @@ class Codegenerator{
     {
         return $this->logicGenerator('master_rumus_payroll', 'kode', 'id_rumus', 'RMP','simpleCode');
     }
+    public function kodeBagian()
+    {
+        return $this->logicGenerator('master_bagian', 'kode_bagian', 'id_bagian', 'BAG','kode_master');
+    }
     //===SECURITY END===//
 
 

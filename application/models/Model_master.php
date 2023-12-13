@@ -98,4 +98,34 @@ class Model_master extends CI_Model
 		$query=$this->db->get_where('master_menu',['status'=>1,'id_menu !='=>0])->result();
 		return $query;
 	}
+//=========================================== MASTER BAGIAN ====================================================================
+	public function getListBagian($active=false)
+	{
+		$where=['id_bagian !='=>1, 'id_bagian != '=>2];
+		$this->db->select('a.*');
+		$this->db->from('master_bagian AS a');
+		$this->db->where($where); 
+		if ($active) {
+			$this->db->where('a.status',1); 
+			$this->db->order_by('nama','ASC');
+		}else{
+			$this->db->order_by('a.create_date','DESC');
+		}
+		$query=$this->db->get()->result();
+		return $query;
+	}
+	public function getBagian($id, $where = null)
+	{
+		$this->db->select('a.*,b.nama as nama_buat, c.nama as nama_update');
+		$this->db->from('master_bagian AS a');
+		$this->db->join('admin AS b', 'b.id_admin = a.create_by', 'left'); 
+		$this->db->join('admin AS c', 'c.id_admin = a.update_by', 'left'); 
+		if(!empty($id)){ $this->db->where('a.id_bagian',$id); } 
+		if(!empty($where)){
+			$this->db->where($where);
+			$this->db->group_by('a.kode_bagian');
+		}
+		$query=$this->db->get()->result();
+		return $query;
+	}
 }

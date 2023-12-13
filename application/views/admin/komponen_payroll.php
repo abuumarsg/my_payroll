@@ -49,13 +49,13 @@
                   <div class="col-md-7">
                     <div class="form-group">
                       <label>Nama Komponen</label>
-                      <input type="text" placeholder="Masukkan Nama Komponen" name="nama" class="form-control">
+                      <input type="text" placeholder="Masukkan Nama Komponen" name="nama" class="form-control" required="required">
                     </div>
                   </div>
                   <div class="col-md-3">
                     <div class="form-group">
                       <label>Sifat</label>
-                      <select class="form-control select2" name="sifat" id="jenis_komponen_add" style="width: 100%;"></select>
+                      <select class="form-control select2" name="sifat" id="jenis_komponen_add" style="width: 100%;" required="required"></select>
                     </div>
                   </div>
                 </div>
@@ -65,11 +65,11 @@
                       <label>Select</label><br>
                         <div class="form-check">
                           <input class="form-check-input" type="radio" name="radio1" value="data">
-                          <label class="form-check-label">Data</label>
+                          <label class="form-check-label">&nbsp;Data</label>
                         </div>
                         <div class="form-check">
                           <input class="form-check-input" type="radio" name="radio1" value="variable">
-                          <label class="form-check-label">Variable</label>
+                          <label class="form-check-label">&nbsp;Variable</label>
                         </div>
                     </div>
                   </div>
@@ -93,11 +93,11 @@
                       <label>Select</label><br>
                         <div class="form-check">
                           <input class="form-check-input" type="radio" name="radio2" value="data">
-                          <label class="form-check-label">Data</label>
+                          <label class="form-check-label">&nbsp;Data</label>
                         </div>
                         <div class="form-check">
                           <input class="form-check-input" type="radio" name="radio2" value="variable">
-                          <label class="form-check-label">Variable</label>
+                          <label class="form-check-label">&nbsp;Variable</label>
                         </div>
                     </div>
                   </div>
