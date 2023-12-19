@@ -150,6 +150,47 @@
     </div>
   </div>
 </div>
+<div id="modal_edit" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Edit Data <b class="text-muted header_data"></b></h2>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <input type="hidden" name="data_id_view">
+      </div>
+      <div class="modal-body">
+        <form id="form_edit">
+          <div class="row">
+            <div class="col-md-12">
+              <input type="hidden" id="data_id_edit" name="id">
+              <div class="form-group">
+                <label>Kode Bagian</label>
+                <input type="text" placeholder="Masukkan Kode Bagian" name="kode" id="data_kode_edit" class="form-control" readonly="readonly">
+              </div>
+              <div class="form-group">
+                <label>Nama Bagian</label>
+                <input type="text" placeholder="Masukkan Nama Bagian" name="nama" id="data_name_edit" class="form-control" required="required">
+              </div>
+              <div class="form-group">
+                <label>Keterangan</label>
+                <textarea name="keterangan" class="form-control" id="data_keterangan_edit" placeholder="Keterangan"></textarea>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <?php 
+        // if (in_array($access['l_ac']['edt'], $access['access'])) {
+          echo '<button type="submit" class="btn btn-info" onclick="do_edit()"><i class="fa fa-edit"></i> Simpan</button>';
+        // }
+        ?>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Kembali</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="modal_delete_partial"></div>
 <script src="<?php echo base_url('asset/plugins/jquery/jquery.min.js')?>"></script>
 <script>
   var url_select="<?php echo base_url('global_control/select2_global');?>";
@@ -240,11 +281,25 @@
     $('#data_create_by_view').html(callback['nama_buat']);
     $('#data_update_by_view').html(callback['nama_update']);
   }
+  function edit_modal() {
+    var id = $('input[name="data_id_view"]').val();
+    var data={id_bagian:id};
+    var callback=getAjaxData("<?php echo base_url('master/master_bagian/view_one')?>",data); 
+    $('#modal_view').modal('toggle');
+    setTimeout(function () {
+       $('#modal_edit').modal('show');
+    },600); 
+    $('.header_data').html(callback['nama']);
+    $('#data_id_edit').val(callback['id']);
+    $('#data_kode_edit').val(callback['kode_bagian']);
+    $('#data_name_edit').val(callback['nama']);
+    $('#data_keterangan_edit').val(callback['keterangan']);
+  }
   function delete_modal(id) {
     var data={id_bagian:id};
     var callback=getAjaxData("<?php echo base_url('master/master_bagian/view_one')?>",data);
     var datax={table:table,column:column,id:id,nama:callback['nama']};
-    loadModalAjax("<?php echo base_url('pages/load_modal_delete')?>",'modal_delete_partial',datax,'delete');
+    loadModalAjax("<?php echo base_url('main/load_modal_delete')?>",'modal_delete_partial',datax,'delete');
   }
   function do_status(id,data) {
     var data_table={status:data};
@@ -257,7 +312,7 @@
   }
   function do_edit(){
     if($("#form_edit")[0].checkValidity()) {
-      submitAjax("<?php echo base_url('master/edt_bagian')?>",'edit','form_edit',null,null);
+      submitAjax("<?php echo base_url('master/edt_bagian')?>",'modal_edit','form_edit',null,null);
       $('#table_data').DataTable().ajax.reload(function (){
         Pace.restart();
       });

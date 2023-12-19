@@ -77,6 +77,53 @@ class Main extends CI_Controller
 		// redirect('main/'.reset($this->dtroot['adm']['your_url']));
 		redirect('main/dashboard');
 	}
+	public function load_modal_delete()
+	{
+		if (!$this->input->is_ajax_request()) 
+		   redirect('not_found');
+		$id=$this->input->post('table');
+		if (!empty($id)) {
+			$data['modal']=$this->load->view('admin/temp/_delete_modal_confirm','',TRUE);
+			echo json_encode($data);
+		}else{
+			echo json_encode($this->messages->sessNotValidParam());
+		}
+	}
+	public function delete()
+	{
+		if (!$this->input->is_ajax_request()) 
+			redirect('not_found');
+		$table=$this->input->post('table');
+		$column=$this->input->post('column');
+		$id=$this->input->post('id');
+		$table2=$this->input->post('table2');
+		$column2=$this->input->post('column2');
+		$id2=$this->input->post('id2');
+		$drop_table=$this->input->post('table_drop');
+		$link_table=$this->input->post('link_table');
+		$link_col=$this->input->post('link_col');
+		$link_data_col=$this->input->post('link_data_col');
+		$file=$this->input->post('file');
+		if (empty($table) || empty($column) || empty($id))
+			echo json_encode($this->messages->notValidParam());
+		if (isset($drop_table)) {
+			$this->model_global->dropTable($drop_table);
+		}
+		if (!empty($link_table) && !empty($link_col) && !empty($link_data_col)) {
+			$wh=[$link_col=>$link_data_col];
+			$this->model_global->deleteQueryNoMsg($link_table,$wh);
+		}
+		if(!empty($file)){
+			unlink($file);
+		}
+		if (!empty($table2) && !empty($column2) && !empty($id2)){
+			$where2=[$column2=>$id2];
+			$this->model_global->deleteQuery($table2,$where2);
+		}
+		$where=[$column=>$id];
+		$datax=$this->model_global->deleteQuery($table,$where);
+		echo json_encode($datax);
+	}
 	public function change_status()
 	{
 		if (!$this->input->is_ajax_request()) 

@@ -181,19 +181,21 @@ class Master extends CI_Controller
 			$data=array(
 				'kode_bagian'=>strtoupper($this->input->post('kode')),
 				'nama'=>ucwords($this->input->post('nama')),
-				'kode_level_struktur'=>strtoupper($this->input->post('level_struktur')),
-				'kode_loker'=>strtoupper($this->input->post('loker')),
-				'atasan'=>strtoupper($this->input->post('atasan_bagian')),
+				'keterangan'=>ucwords($this->input->post('keterangan')),
+				// 'kode_level_struktur'=>strtoupper($this->input->post('level_struktur')),
+				// 'kode_loker'=>strtoupper($this->input->post('loker')),
+				// 'atasan'=>strtoupper($this->input->post('atasan_bagian')),
 			);
 			$data=array_merge($data,$this->model_global->getUpdateProperties($this->admin));
 			//cek data
-			$old=$this->input->post('kode_old');
-			if ($old != $data['kode_bagian']) {
-				$cek=$this->model_master->checkBagianCode($data['kode_bagian']);
-			}else{
-				$cek=false;
-			}
-			$datax = $this->model_global->updateQueryCC($data,'master_bagian',['id_bagian'=>$id],$cek);
+			// $old=$this->input->post('kode_old');
+			// if ($old != $data['kode_bagian']) {
+			// 	$cek=$this->model_master->checkBagianCode($data['kode_bagian']);
+			// }else{
+			// 	$cek=false;
+			// }
+			// $datax = $this->model_global->updateQueryCC($data,'master_bagian',['id_bagian'=>$id],$cek);
+			$datax = $this->model_global->updateQuery($data,'master_bagian',['id_bagian'=>$id]);
 		}else{
 			$datax = $this->messages->notValidParam(); 
 		}
