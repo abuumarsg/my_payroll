@@ -187,10 +187,10 @@ class Libgeneral {
     public function getOperationAritmaticList()
     {
         $pack=[
-            '+'=>'+',
-            '-'=>'-',
-            '/'=>'/',
-            '*'=>'*'
+            '+'=>'( + ) Tambah',
+            '-'=>'( - ) Kurang',
+            '/'=>'( / ) Bagi',
+            '*'=>'( * ) Kali'
         ];
         return $pack;
     }

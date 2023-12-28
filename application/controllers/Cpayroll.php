@@ -122,6 +122,11 @@ class Cpayroll extends CI_Controller
 					'nama1'=>$data['nama1'],
 					'nama2'=>$data['nama2'],
 					'operation'=>$data['operation'],
+					'sifatE'=>$data['sifat'],
+					'type_first'=>$data['type_first'],
+					'type_second'=>$data['type_second'],
+					'first'=>$data['first'],
+					'second'=>$data['second'],
 					'status'=>$data['status'],
 					'create_date'=>$this->libgeneral->getDateTimeMonthFormatUser($data['create_date']),
 					'update_date'=>$this->libgeneral->getDateTimeMonthFormatUser($data['update_date']),
@@ -138,14 +143,14 @@ class Cpayroll extends CI_Controller
 				$data = $this->libgeneral->getOperationAritmaticList();
 				$pack=[];
 				foreach ($data as $d => $val) {
-					$pack[$val]=$val;
+					$pack[$d]=$val;
 				}
         		echo json_encode($pack);
 			}elseif ($usage == 'getJenisKomponenList') {
 				$data = $this->libgeneral->getJenisKomponenList();
 				$pack=[];
 				foreach ($data as $d => $val) {
-					$pack[$val]=$val;
+					$pack[$d]=$val;
 				}
         		echo json_encode($pack);
 			}elseif ($usage == 'dataVariable') {
@@ -194,6 +199,39 @@ class Cpayroll extends CI_Controller
 			];
 			$dataIns=array_merge($dataIns, $this->model_global->getCreateProperties($this->admin));
 			$datax = $this->model_global->insertQuery($dataIns,'master_komponen');
+		}else{
+			$datax=$this->messages->notValidParam();
+		}
+		echo json_encode($datax);
+	}
+	public function edit_master_komponen()
+	{
+		$id = $this->input->post('id');
+		$kode = $this->input->post('kode');
+		if(!empty($kode)){
+			$nama = $this->input->post('nama');
+			$sifat = $this->input->post('sifat');
+			$radio1 = $this->input->post('radio1');
+			$variable_first = $this->input->post('variable_first');
+			$data_first = $this->input->post('data_first');
+			$operation = $this->input->post('operation');
+			$radio2 = $this->input->post('radio2');
+			$variable_second = $this->input->post('variable_second');
+			$data_second = $this->input->post('data_second');
+			$first = ($radio1 == 'data') ? $data_first : $variable_first;
+			$second = ($radio2 == 'data') ? $data_second : $variable_second;
+			$dataIns = [
+				'kode'=>$kode,
+				'nama'=>$nama,
+				'sifat'=>$sifat,
+				'type_first'=>$radio1,
+				'first'=>$first,
+				'operation'=>$operation,
+				'type_second'=>$radio2,
+				'second'=>$second,
+			];
+			$dataIns=array_merge($dataIns, $this->model_global->getUpdateProperties($this->admin));
+			$datax = $this->model_global->updateQuery($dataIns,'master_komponen',['id'=>$id]);
 		}else{
 			$datax=$this->messages->notValidParam();
 		}
